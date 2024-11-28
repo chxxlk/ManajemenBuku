@@ -1,6 +1,5 @@
-<h3>Ini dashboard user</h3>
-@if (@session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
+@extends('layout.view')
+@section('title', 'Reads Now')
+@section('content')
+   <h1 style="color: white">hallo</h1>
+@endsection

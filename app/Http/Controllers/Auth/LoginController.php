@@ -17,7 +17,8 @@ class LoginController extends Controller
         return view('/auth/login');
     }
 
-    public function create(Request $request){
+    public function create(Request $request)
+    {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
@@ -29,16 +30,29 @@ class LoginController extends Controller
         if ($user && Hash::check($credentials['password'], $user->password)) {
             Auth::guard('web')->login($user);
             $request->session()->regenerate();
-            return redirect()->route('users.dashboard');
+            $request->session()->put('user_id', Auth::id());
+
+            return redirect()->route('users_dashboard');
         }
         if ($admin && Hash::check($credentials['password'], $admin->password)) {
             Auth::guard('admin')->login($admin);
             $request->session()->regenerate();
-            return redirect()->route('admin.dashboard');
+            $request->session()->put('id_admin', $admin->id_admin);
+
+            return redirect()->route('admins_dashboard');
         }
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->withInput($request->only('email'));
+    }
+
+    public function destroy(Request $request)
+    {
+        Auth::logout();
+        $request->session()->flush();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('home');
     }
 }

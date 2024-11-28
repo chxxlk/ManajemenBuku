@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admins\DashboardController as AdminsDashboardController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Users\DashboardController;
+use App\Http\Controllers\Admins\BooksController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,14 +29,12 @@ Route::post('/auth/login', [LoginController::class, 'create'])->name('user_login
 Route::get('/auth/register', [RegisterController::class, 'index'])->name('register');
 Route::post('/auth/register', [RegisterController::class, 'create'])->name('users_register');
 
+Route::get('auth/logout', [LoginController::class, 'destroy'])->name('logout');
 
 Route::middleware('role:user')->group(function() {
-    Route::get('/users/dashboard', function () {
-        return view('users.dashboard');
-    })->name('users.dashboard');
+    Route::get('/users/dashboard', [DashboardController::class, 'index'])->name('users_dashboard');
 });
 Route::middleware('role:admin')->group(function() {
-    Route::get('/admins/dashboard', function() {
-        return view('admins.dashboard');
-    })->name('admin.dashboard');
+    Route::get('/admins/dashboard', [AdminsDashboardController::class, 'index'])->name('admins_dashboard');
+    Route::resource('/admins/books', BooksController::class);
 });
